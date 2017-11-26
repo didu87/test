@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <cctype>
+#include <stdexcept>
 
 using namespace std;
 
@@ -63,38 +65,103 @@ vector<uint32_t> parse_string(const string &s)
 	return res;
 }
 
+
+const int BLOCK_SIZE=1000;
+
+struct Reader
+{
+	size_t str_num;
+	size_t val_num;
+	vector<size_t> str_len;
+	string buf;
+	char c;
+	bool eof_flag;
+	Reader()
+	{
+		str_num=0;
+		val_num=0;
+	}
+	bool getnum(uint32_t &num)
+	{
+		val_num++;
+		buf.clear();
+		c=cin.get();
+		while(!cin.eof())
+		{
+			cout<<"readed code "<<int(c)<<endl;
+			if(isdigit(c))
+				buf+=c;
+			else 
+			{
+				if(c=='\n') 
+				{
+					str_len.push_back(val_num);
+					str_num++;
+					val_num=0;
+				}
+				break;
+			}
+			cout<<"buf = "<<buf<<endl;
+			c=cin.get();
+		}
+
+		num=0;
+		if(cin.eof())
+			return false;
+
+		try
+		{
+			num=stoi(buf); // string to integer
+		}
+		catch(invalid_argument &e)
+		{
+			return false;
+		}
+		return true;
+	}
+};
+
 int main()
 {
 	// read sample
 	string s;
 	getline(cin, s, '\n');
 	vector<uint32_t> sample=parse_string(s);
+	cout<<"sample readed"<<endl;
 	
 	// read text and count numbers in lines
 	vector<uint32_t> text;
-	vector<size_t> str_count;
-	while(getline(cin, s, '\n'))
+	Reader reader;
+	uint32_t x;
+	while(reader.getnum(x))
 	{
-		vector<uint32_t> str=parse_string(s);
-		text.insert(text.end(), str.begin(), str.end());
-		str_count.push_back(str.size());
+		cout<<x<<"+\n";
 	}
 	
-	// search
-	vector<size_t> indexes=z_search(sample,text);
 
-	// calculate and write line and pos for each found sample
-	for(auto i:indexes)
-	{
-		int bi=0, ei=0;	
-		for(int k=0;k<str_count.size();k++)
-		{
-			ei=bi+str_count[k];
-			if(i>=bi && i<ei)
-				cout<<k+1<<", "<<i-bi+1<<endl;
-			bi=ei;
-		}
-	}
+//	vector<size_t> str_count;
+//	while(getline(cin, s, '\n'))
+//	{
+//		vector<uint32_t> str=parse_string(s);
+//		text.insert(text.end(), str.begin(), str.end());
+//		str_count.push_back(str.size());
+//	}
+//	
+//	// search
+//	vector<size_t> indexes=z_search(sample,text);
+//
+//	// calculate and write line and pos for each found sample
+//	for(auto i:indexes)
+//	{
+//		int bi=0, ei=0;	
+//		for(int k=0;k<str_count.size();k++)
+//		{
+//			ei=bi+str_count[k];
+//			if(i>=bi && i<ei)
+//				cout<<k+1<<", "<<i-bi+1<<endl;
+//			bi=ei;
+//		}
+//	}
 }
 
 
