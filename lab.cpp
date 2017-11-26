@@ -72,12 +72,13 @@ struct Reader
 	vector<size_t> str_len;
 	string buf;
 	char c;
-	bool eof_flag;
+
 	Reader()
 	{
 		str_pos=0;
 		val_pos=0;
 	}
+
 	bool getnum(uint32_t &num)
 	{
 		buf.clear();
@@ -86,7 +87,6 @@ struct Reader
 		do
 		{
 			c=cin.get();
-			cout<<"|"<<c<<"("<<int(c)<<"), ";
 			if(c=='\n')
 			{
 				cout<<"\\n"<<endl;
@@ -100,14 +100,12 @@ struct Reader
 		// read digits
 		while(!cin.eof() && isdigit(c))
 		{
-			cout<<"|"<<c<<"("<<int(c)<<"), ";
 			buf+=c;
 			c=cin.get();
 		}
 
 		if(cin.eof() || c=='\n')
 		{
-			cout<<"\\n"<<endl;
 			str_len.push_back(val_pos);
 			str_pos++;
 			val_pos=0;
@@ -125,6 +123,22 @@ struct Reader
 		catch(invalid_argument &e) {}
 		return true;
 	}
+
+	bool getvec(vector<uint32_t> &vec, size_t maxsize)
+	{
+		uint32_t x;
+		vec.clear();
+		for(int i=0;i<maxsize;i++)
+		{
+			if(!getnum(x))
+				if(i==0)
+					return false;
+				else
+					break;
+			vec.push_back(x);
+		}
+		return true;
+	}
 };
 
 const int BLOCK_SIZE=10;
@@ -138,14 +152,15 @@ int main()
 	cout<<"sample readed"<<endl;
 	
 	// read text and count numbers in lines
-	vector<uint32_t> text;
 	Reader reader;
-	uint32_t x;
-	while(reader.getnum(x))
+	vector<uint32_t> block;
+	while(reader.getvec(block, BLOCK_SIZE))
 	{
-		cout<<"+"<<x<<" ";
+		cout<<endl;
+		for(auto x:block)
+			cout<<x<<' ';
 	}
-	
+
 	cout<<endl;
 	for(auto i:reader.str_len)
 	{
