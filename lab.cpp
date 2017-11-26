@@ -65,12 +65,10 @@ vector<uint32_t> parse_string(const string &s)
 	return res;
 }
 
-
-const int BLOCK_SIZE=1000;
-
 struct Reader
 {
-	size_t str_num;
+	size_t str_pos;
+	size_t val_pos;
 	size_t val_num;
 	vector<size_t> str_len;
 	string buf;
@@ -78,30 +76,29 @@ struct Reader
 	bool eof_flag;
 	Reader()
 	{
-		str_num=0;
-		val_num=0;
+		str_pos=0;
+		val_pos=0;
 	}
 	bool getnum(uint32_t &num)
 	{
-		val_num++;
+		val_pos++;
+
 		buf.clear();
 		c=cin.get();
 		while(!cin.eof())
 		{
-			cout<<"readed code "<<int(c)<<endl;
 			if(isdigit(c))
 				buf+=c;
 			else 
 			{
 				if(c=='\n') 
 				{
-					str_len.push_back(val_num);
-					str_num++;
-					val_num=0;
+					str_len.push_back(val_pos);
+					str_pos++;
+					val_pos=0;
 				}
 				break;
 			}
-			cout<<"buf = "<<buf<<endl;
 			c=cin.get();
 		}
 
@@ -117,9 +114,13 @@ struct Reader
 		{
 			return false;
 		}
+		
+		val_num++;
 		return true;
 	}
 };
+
+const int BLOCK_SIZE=10;
 
 int main()
 {
@@ -135,9 +136,14 @@ int main()
 	uint32_t x;
 	while(reader.getnum(x))
 	{
-		cout<<x<<"+\n";
+		cout<<"+"<<x<<" ";
 	}
 	
+	cout<<endl;
+	for(auto i:reader.str_len)
+	{
+		cout<<i<<' ';
+	}
 
 //	vector<size_t> str_count;
 //	while(getline(cin, s, '\n'))
