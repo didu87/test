@@ -69,7 +69,6 @@ struct Reader
 {
 	size_t str_pos;
 	size_t val_pos;
-	size_t val_num;
 	vector<size_t> str_len;
 	string buf;
 	char c;
@@ -83,29 +82,35 @@ struct Reader
 	{
 		buf.clear();
 
-		// search digits (ignore spaces and separators) 
-		c=cin.get();
-		while(!cin.eof() && !isdigit(c)) 
+		// search digits 
+		do
 		{
+			c=cin.get();
+			cout<<"|"<<c<<"("<<int(c)<<"), ";
+			if(c=='\n')
+			{
+				cout<<"\\n"<<endl;
+				str_len.push_back(val_pos);
+				str_pos++;
+				val_pos=0;
+			}
+		}
+		while(!cin.eof() && !isdigit(c)); 
+
+		// read digits
+		while(!cin.eof() && isdigit(c))
+		{
+			cout<<"|"<<c<<"("<<int(c)<<"), ";
+			buf+=c;
 			c=cin.get();
 		}
 
-		// read digits
-		while(!cin.eof())
+		if(cin.eof() || c=='\n')
 		{
-			if(isdigit(c))
-				buf+=c;
-			else 
-			{
-				if(c=='\n') 
-				{
-					str_len.push_back(val_pos);
-					str_pos++;
-					val_pos=0;
-				}
-				break;
-			}
-			c=cin.get();
+			cout<<"\\n"<<endl;
+			str_len.push_back(val_pos);
+			str_pos++;
+			val_pos=0;
 		}
 
 		num=0;
@@ -116,10 +121,8 @@ struct Reader
 		{
 			num=stoi(buf); // string to integer
 			val_pos++;
-			val_num++;
 		}
 		catch(invalid_argument &e) {}
-		
 		return true;
 	}
 };
