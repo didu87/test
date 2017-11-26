@@ -81,10 +81,16 @@ struct Reader
 	}
 	bool getnum(uint32_t &num)
 	{
-		val_pos++;
-
 		buf.clear();
+
+		// search digits (ignore spaces and separators) 
 		c=cin.get();
+		while(!cin.eof() && !isdigit(c)) 
+		{
+			c=cin.get();
+		}
+
+		// read digits
 		while(!cin.eof())
 		{
 			if(isdigit(c))
@@ -109,13 +115,11 @@ struct Reader
 		try
 		{
 			num=stoi(buf); // string to integer
+			val_pos++;
+			val_num++;
 		}
-		catch(invalid_argument &e)
-		{
-			return false;
-		}
+		catch(invalid_argument &e) {}
 		
-		val_num++;
 		return true;
 	}
 };

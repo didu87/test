@@ -4,8 +4,8 @@
 
 using namespace std;
 
-const int LINES=100*1024;
-const int MAX_LEN=100*1024; 
+const int LINES=20;
+const int MAX_LEN=10; 
 
 int main()
 {
