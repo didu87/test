@@ -89,7 +89,6 @@ struct Reader
 			c=cin.get();
 			if(c=='\n')
 			{
-				cout<<"\\n"<<endl;
 				str_len.push_back(val_pos);
 				str_pos++;
 				val_pos=0;
@@ -139,7 +138,7 @@ struct Reader
 		}
 		return true;
 	}
-};
+}
 
 const int BLOCK_SIZE=10;
 
